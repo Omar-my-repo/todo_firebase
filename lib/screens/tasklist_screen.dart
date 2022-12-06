@@ -31,13 +31,13 @@ class _TasksScreenState extends State<TasksScreen> {
           selectableDayPredicate: (date) => date.day != 23,
           locale: 'en',
         ),
-        SizedBox(height: 20),
+        SizedBox(height: 10),
         Expanded(
           child: ListView.builder(
             itemCount: 12,
             itemBuilder: (context, index) {
               return Container(
-                margin: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                 padding: EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
