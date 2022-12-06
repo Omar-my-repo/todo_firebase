@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
-class ModalBottomSheet extends StatelessWidget {
-  const ModalBottomSheet({Key? key}) : super(key: key);
+class ModalBottomSheet extends StatefulWidget {
+  @override
+  State<ModalBottomSheet> createState() => _ModalBottomSheetState();
+}
+
+class _ModalBottomSheetState extends State<ModalBottomSheet> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +23,16 @@ class ModalBottomSheet extends StatelessWidget {
             style: Theme.of(context).textTheme.subtitle1,
           ),
           Form(
+            key: _formKey,
             child: Column(
               children: [
                 TextFormField(
+                  validator: (v) {
+                    if (v!.isEmpty) {
+                      return 'title is required';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                     label: Text('task title'),
                     labelStyle: TextStyle(fontSize: 20, color: Colors.black45),
@@ -38,6 +50,12 @@ class ModalBottomSheet extends StatelessWidget {
                 // SizedBox(height: 8),
                 TextFormField(
                   maxLines: 3,
+                  validator: (v) {
+                    if (v!.isEmpty) {
+                      return 'task description is required';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                     label: Text('task description'),
                     labelStyle: TextStyle(fontSize: 20, color: Colors.black45),
@@ -72,7 +90,12 @@ class ModalBottomSheet extends StatelessWidget {
           ),
           SizedBox(height: 14),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                print('done=================');
+                Navigator.pop(context);
+              }
+            },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
