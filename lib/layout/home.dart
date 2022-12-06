@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:route_todoapp/layout/modal_bottom_sheet.dart';
 import 'package:route_todoapp/screens/settings_screen.dart';
 
 import '../screens/tasklist_screen.dart';
@@ -17,11 +18,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ToDo'),
+        title: Text('Fkrny - فكَّرني'),
       ),
       extendBody: true,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+              isScrollControlled: true,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+              ),
+              context: context,
+              builder: (context) {
+                return ModalBottomSheet();
+              });
+        },
         child: Icon(
           Icons.add,
           size: 24,
