@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:route_todoapp/layout/modal_bottom_sheet.dart';
 import 'package:route_todoapp/screens/settings_screen.dart';
+import 'package:route_todoapp/screens/task_modal_sheet/task_sheet.dart';
 
 import '../screens/tasklist_screen.dart';
 
@@ -18,30 +18,31 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Fkrny - فكَّرني'),
+        title: const Text('Fkrny - فكَّرني'),
       ),
       extendBody: true,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
               isScrollControlled: true,
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
               ),
               context: context,
               builder: (context) {
-                return ModalBottomSheet();
+                return TaskSheet();
               });
         },
-        child: Icon(
+        shape: const StadiumBorder(
+            side: BorderSide(color: Colors.white, width: 4)),
+        child: const Icon(
           Icons.add,
           size: 24,
         ),
-        shape: StadiumBorder(side: BorderSide(color: Colors.white, width: 4)),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         notchMargin: 8,
         child: BottomNavigationBar(
           currentIndex: currentIndex,
@@ -52,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           elevation: 0,
           backgroundColor: Colors.transparent,
-          items: [
+          items: const [
             BottomNavigationBarItem(icon: Icon(Icons.list), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.settings), label: '')
           ],
@@ -62,5 +63,5 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  List<Widget> screens = [TasksScreen(), SettingsScreen()];
+  List<Widget> screens = [TasksScreen(), const SettingsScreen()];
 }

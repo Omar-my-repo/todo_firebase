@@ -1,7 +1,12 @@
 import 'package:calendar_timeline/calendar_timeline.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:route_todoapp/network/local/firebase_utils.dart';
+import 'package:route_todoapp/shared/components/task_item.dart';
 import 'package:route_todoapp/style/color.dart';
+
+import '../models/task.dart';
 
 class TasksScreen extends StatefulWidget {
   @override
@@ -18,8 +23,8 @@ class _TasksScreenState extends State<TasksScreen> {
         CalendarTimeline(
           // showYears: true,
           initialDate: _today,
-          firstDate: _today,
-          lastDate: DateTime.now().add(Duration(days: 365 * 4)),
+          firstDate: DateTime.now(),
+          lastDate: DateTime.now().add(const Duration(days: 365 * 4)),
           onDateSelected: (date) => setState(() => _today = date),
           leftMargin: 20,
           monthColor: colorBlack,
@@ -31,67 +36,24 @@ class _TasksScreenState extends State<TasksScreen> {
           selectableDayPredicate: (date) => date.day != 23,
           locale: 'en',
         ),
-        SizedBox(height: 10),
-        Expanded(
-          child: ListView.builder(
-            itemCount: 12,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 3,
-                      height: 80,
-                      color: primaryColor,
-                    ),
-                    SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'task Tilte',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline1!
-                                .copyWith(color: primaryColor, fontSize: 26),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'task desc',
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle1!
-                                .copyWith(color: colorBlack, fontSize: 22),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 14),
-                    Container(
-                      width: 40,
-                      height: 35,
-                      decoration: BoxDecoration(
-                        color: primaryColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.check,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
+        const SizedBox(height: 10),
+        StreamBuilder<QuerySnapshot<Task>>(
+            stream: getTaskFromFirestore(_today),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+              var tasks =
+                  snapshot.data?.docs.map((e) => e.data()).toList() ?? [];
+              return Expanded(
+                child: ListView.builder(
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    return TaskItem(tasks[index]);
+                  },
                 ),
               );
-            },
-          ),
-        )
+            })
       ],
     );
   }

@@ -13,7 +13,7 @@ class MyThemeData {
       error: Colors.red,
       onError: Colors.white,
       surface: primaryColor,
-      onSurface: Colors.white,
+      onSurface: Colors.black45,
       background: colorGreen,
       onBackground: Colors.white,
       brightness: Brightness.light,

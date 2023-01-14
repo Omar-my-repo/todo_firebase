@@ -1,12 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:route_todoapp/screens/task_modal_sheet/task_sheet_navigator.dart';
+import 'package:route_todoapp/screens/task_modal_sheet/task_sheet_vm.dart';
+import 'package:route_todoapp/shared/components/utils.dart' as utils;
 
-class ModalBottomSheet extends StatefulWidget {
+class TaskSheet extends StatefulWidget {
   @override
-  State<ModalBottomSheet> createState() => _ModalBottomSheetState();
+  State<TaskSheet> createState() => _TaskSheetState();
 }
 
-class _ModalBottomSheetState extends State<ModalBottomSheet> {
+class _TaskSheetState extends State<TaskSheet> implements TaskSheetNavigator {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TaskSheetViewModel viewModel = TaskSheetViewModel();
+  TextEditingController title = TextEditingController();
+  TextEditingController description = TextEditingController();
+  DateTime selectedDate = DateTime.now();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    viewModel.navigator = this;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +47,7 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
                     }
                     return null;
                   },
+                  controller: title,
                   decoration: InputDecoration(
                     label: Text('task title'),
                     labelStyle: TextStyle(fontSize: 20, color: Colors.black45),
@@ -49,6 +64,7 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
                 ),
                 // SizedBox(height: 8),
                 TextFormField(
+                  controller: description,
                   maxLines: 3,
                   validator: (v) {
                     if (v!.isEmpty) {
@@ -82,19 +98,21 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
             textAlign: TextAlign.start,
           ),
           SizedBox(height: 14),
-          Text(
-            '12-12-122',
-            style:
-                Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20),
-            textAlign: TextAlign.center,
+          InkWell(
+            onTap: () {
+              selectDate();
+            },
+            child: Text(
+              '${selectedDate.year}/${selectedDate.month}/${selectedDate.day}',
+              style:
+                  Theme.of(context).textTheme.subtitle1!.copyWith(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
           ),
           SizedBox(height: 14),
           ElevatedButton(
             onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                print('done=================');
-                Navigator.pop(context);
-              }
+              validationFunction();
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -111,5 +129,46 @@ class _ModalBottomSheetState extends State<ModalBottomSheet> {
         ],
       ),
     );
+  }
+
+  validationFunction() {
+    if (_formKey.currentState!.validate()) {
+      viewModel.addTaskToFireStore(title.text, description.text,
+          DateUtils.dateOnly(selectedDate).microsecondsSinceEpoch);
+    }
+  }
+
+  selectDate() async {
+    DateTime? chossenDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(
+        Duration(days: 365),
+      ),
+    );
+    if (chossenDate == null) return;
+    selectedDate = chossenDate;
+    setState(() {});
+  }
+
+  @override
+  void hideLoading() {
+    utils.hideDialog(context);
+  }
+
+  @override
+  void navigateBack() {
+    utils.hideDialog(context);
+  }
+
+  @override
+  void showLoading() {
+    utils.showLoading(context);
+  }
+
+  @override
+  void showMessage(String message) {
+    utils.sowMessage(context, message);
   }
 }
